@@ -1,0 +1,25 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API Reservas",
+    "description": "Microsserviço responsável pelo gerenciamento de reservas de salas.",
+    "version": "1.0.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/reservas": {
+      "get": {
+        "summary": "Listar todas as reservas",
+        "responses": {
+          "200": { "description": "Sucesso" }
+        }
+      },
+      "post": {
+        "summary": "Criar uma nova reserva",
+        "responses": {
+          "201": { "description": "Criado com sucesso" }
+        }
+      }
+    }
+  }
+}

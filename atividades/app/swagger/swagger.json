@@ -1,0 +1,146 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Atividades / Notas",
+    "version": "1.0.0",
+    "description": "Microsserviço para gerenciamento de Atividades, registro e atualização de Notas.",
+    "contact": {
+      "name": "Equipe Colégio Porto"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5002/api",
+      "description": "Servidor de Desenvolvimento Local (Porta 5002 no Host)"
+    }
+  ],
+  "paths": {
+    "/atividades": {
+      "get": {
+        "summary": "Lista todas as atividades",
+        "tags": ["Atividades"],
+        "responses": {
+          "200": { "description": "Lista de atividades retornada com sucesso" }
+        }
+      },
+      "post": {
+        "summary": "Cria uma nova atividade",
+        "tags": ["Atividades"],
+        "description": "Requer ID de Turma e Professor (externos, validados via API de Gerenciamento).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome_atividade": { "type": "string", "example": "Prova 1 - Matemática" },
+                  "descricao": { "type": "string", "example": "Capítulo 1 e 2 - Foco em Álgebra" },
+                  "peso_porcento": { "type": "integer", "example": 40 },
+                  "data_entrega": { "type": "string", "format": "date", "description": "Formato DD/MM/AAAA", "example": "25/11/2025" },
+                  "turma_id": { "type": "integer", "description": "ID da Turma (Gerenciamento)", "example": 1 },
+                  "professor_id": { "type": "integer", "description": "ID do Professor (Gerenciamento)", "example": 5 }
+                },
+                "required": ["nome_atividade", "turma_id", "professor_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Atividade criada com sucesso" },
+          "404": { "description": "Turma ou Professor não encontrado" }
+        }
+      }
+    },
+    "/atividades/{id}": {
+      "get": {
+        "summary": "Busca uma atividade por ID",
+        "tags": ["Atividades"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Atividade encontrada" }
+        }
+      },
+      "put": {
+        "summary": "Atualiza uma atividade existente",
+        "tags": ["Atividades"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Atualizado com sucesso" } }
+      },
+      "delete": {
+        "summary": "Remove uma atividade e todas as suas notas vinculadas",
+        "tags": ["Atividades"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Removido com sucesso" } }
+      }
+    },
+    "/notas": {
+      "get": {
+        "summary": "Lista todas as notas registradas",
+        "tags": ["Notas"],
+        "responses": {
+          "200": { "description": "Lista de notas retornada com sucesso" }
+        }
+      },
+      "post": {
+        "summary": "Cria um novo registro de nota",
+        "tags": ["Notas"],
+        "description": "Requer ID do Aluno (externo, validado via API de Gerenciamento) e ID da Atividade (interna).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "aluno_id": { "type": "integer", "description": "ID do Aluno (Gerenciamento)", "example": 101 },
+                  "atividade_id": { "type": "integer", "description": "ID da Atividade (Atividades/Notas)", "example": 1 },
+                  "nota": { "type": "number", "format": "float", "example": 8.5 }
+                },
+                "required": ["aluno_id", "atividade_id", "nota"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Nota registrada com sucesso" },
+          "404": { "description": "Aluno ou Atividade não encontrado" }
+        }
+      }
+    },
+    "/notas/{id}": {
+      "get": {
+        "summary": "Busca uma nota por ID",
+        "tags": ["Notas"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Nota encontrada" }
+        }
+      },
+      "put": {
+        "summary": "Atualiza o valor da nota (Não permite alterar Aluno/Atividade)",
+        "tags": ["Notas"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Nota atualizada com sucesso" } }
+      },
+      "delete": {
+        "summary": "Remove uma nota pelo ID",
+        "tags": ["Notas"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Removido com sucesso" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+services:
+  api-colegio:
+    build: 
+      context: ./api-colegio
+      dockerfile: Dockerfile
+    container_name: gerenciamento_service
+    ports:
+      - "5000:5000"
+    volumes:
+      - gerenciamento_db:/app/instance
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - colegio_network
+      
+  reservas:
+    build: 
+      context: ./reservas
+      dockerfile: Dockerfile
+    container_name: reservas_service
+    ports:
+      - "5001:5001" 
+    volumes:
+      - reservas_db:/app/instance
+    environment:
+      - FLASK_ENV=development
+      - GERENCIAMENTO_API_URL=http://api-colegio:5000/api
+    depends_on:
+      - api-colegio
+    networks:
+      - colegio_network
+
+  atividades:
+    build: 
+      context: ./atividades
+      dockerfile: Dockerfile
+    container_name: atividades_service
+    ports:
+      - "5002:5002" 
+    volumes:
+      - atividades_db:/app/instance
+    environment:
+      - FLASK_ENV=development
+      - GERENCIAMENTO_API_URL=http://api-colegio:5000/api
+    depends_on:
+      - api-colegio
+    networks:
+      - colegio_network
+
+networks:
+  colegio_network:
+    driver: bridge
+
+volumes:
+  gerenciamento_db:
+  reservas_db:
+  atividades_db:
